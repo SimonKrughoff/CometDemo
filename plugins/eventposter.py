@@ -13,8 +13,6 @@ def check_response(response):
 
 def post_event(event, baseUrl, filterName):
     values = {'event':event.text}
-    print values
-    print baseUrl+'/'+filterName
     if not baseUrl.startswith('http'):
         baseUrl = 'http://'+baseUrl
     response = requests.post(baseUrl+'/'+filterName, data=values)
@@ -40,7 +38,6 @@ class EventPoster(object):
         """
         Send with GET message to HipChat.
         """
-        print "Here"
         post_event(event, self.baseUrl, self.filterName)
 
     def get_options(self):
