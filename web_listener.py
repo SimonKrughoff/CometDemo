@@ -24,16 +24,19 @@ def runSubscriber(brokerAddress, filterString, filterName, postUrl):
 
     command_str = "twistd comet --remote={brokerAddress} --local-ivo={ivorn} "+\
                   "--eventdb={eventdbdir} --event-poster --event-poster-postUrl={postUrl} "+\
-                  "--event-poster-filterName={filterName} --filter={filterString}"
+                  "--event-poster-filterName={filterName}"
 
     rundir = tempfile.mkdtemp()
     ivorn = 'ivo://me.mysubscriber/%s'%(filterName)
-    args = {'brokerAddress':brokerAddress, 'ivorn':ivorn, 'eventdbdir':rundir, 'postUrl':postUrl, 
-            'filterName':filterName, 'filterString':filterString}
+    fdata = {'brokerAddress':brokerAddress, 'ivorn':ivorn, 'eventdbdir':rundir, 'postUrl':postUrl, 
+            'filterName':filterName}
     os.chdir(rundir)
     print "Running new subscriber in directory %s"%rundir
-    comm_str = command_str.format(**args)
-    subprocess.call(comm_str.split())
+    comm_str = command_str.format(**fdata)
+    comm_arr = comm_str.split()
+    #to allow filter string to have spaces.
+    comm_arr.append("--filter={filterString}".format(filterString=filterString))
+    subprocess.call(comm_arr)
     fh = open('twistd.pid')
     pid = fh.readline().rstrip()
     return int(pid), rundir
@@ -101,7 +104,7 @@ class FormPage(Resource):
         """
         tabString = ''
         for k in filterInfo:
-            tabString += '<tr><td><a href="http://localhost:8880/%s">%s</a></td><td>%s</td></tr>'%(k,k, ",".join(filterInfo[k]))
+            tabString += '<tr><td><a href="http://localhost:8880/%s">%s</a></td><td>%s</td></tr>'%(k,k, ", ".join(filterInfo[k]))
         return '<html><body><form method="POST">'+\
                '<b>Broker Address: </b><input name="broker-address" value="localhost:8809" type="text"/><br>'+\
                '<b>Filter String: </b><input name="filter-string" value="." type="text"/><br>'+\
