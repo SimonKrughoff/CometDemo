@@ -44,10 +44,10 @@ def add_page(name, filterString):
     @param[in] filterString  String containing the XPATH filter string
     """
 
-    root.putChild(name, PostPage())
     if name in filterInfo:
         filterInfo[name].append(filterString)
     else:
+        root.putChild(name, PostPage())
         filterInfo[name] = [filterString,]
 
 def add_proc(proc, rundir):
